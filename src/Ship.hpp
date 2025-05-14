@@ -1,7 +1,8 @@
 #ifndef SHIP_HPP
 #define SHIP_HPP
 
-#include <SFML/Graphics.hpp>
+#include "NTL/Graphics.hpp"
+
 #include <vector>
 #include "TextureManager.hpp"
 #include "GraphicManager.hpp"
@@ -20,7 +21,7 @@ public:
         segments(rang, true),
         areaPosition({-1, -1})
     {
-        sprite = graphics.add<ntl::Sprite>(zLayer, TextureManager::getInstance()[getTextureId(rang)]);
+        sprite = graphics.add<ntl::Shape>(zLayer, TextureManager::getInstance()[getTextureId(rang)]);
 
         sprite->setScale({
             Core::getCellsize() / sprite->getTexture().getSize().x,
@@ -96,7 +97,7 @@ public:
     bool vertical = true;
     ntl::Vector2i areaPosition;
     ntl::Vector2f menuPosition;
-    ntl::Sprite *sprite = nullptr;
+    ntl::Shape *sprite = nullptr;
 
 protected:
     static TextureManager::ID getTextureId(size_t rang) {

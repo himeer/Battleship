@@ -10,19 +10,19 @@
 #include <optional>
 
 template<class Drawable>
-concept HasGlobalBounds = requires(Drawable t) {
-    { t.getGlobalBounds() } -> std::same_as<ntl::FloatRect>;
+concept HasBounds = requires(Drawable t) {
+    { t.getBounds() } -> std::same_as<ntl::FloatRect>;
 };
 
 template<class Drawable>
-concept HasNotGlobalBounds = !HasGlobalBounds<Drawable>;
+concept HasNotBounds = !HasBounds<Drawable>;
 
 class GraphicManager : public ntl::Drawable {
 public:
     template<class Drawable, class... Args>
     Drawable* add(int zLayer, Args&&... args) {
         return dynamic_cast<Drawable*>(objects_.emplace(
-            getMethod_getGlobalBounds<Drawable>(),
+            getMethod_getBounds<Drawable>(),
             zLayer,
             std::make_unique<Drawable>(args...)
         ).first->drawable.get());
@@ -39,8 +39,8 @@ public:
 
     std::optional<std::pair<Drawable*, ntl::FloatRect>> getTouched(ntl::Vector2f point) const {
         for (auto itr = objects_.begin(); itr != objects_.end(); ++itr) {
-            if (itr->getGlobalBounds) {
-                auto globalBounds = itr->getGlobalBounds(*itr->drawable);
+            if (itr->getBounds) {
+                auto globalBounds = itr->getBounds(*itr->drawable);
                 if (globalBounds.contains(point)) {
                     return std::make_pair(itr->drawable.get(), globalBounds);
                 }
@@ -75,22 +75,22 @@ private:
     struct Object {
         int zLayer;
         std::unique_ptr<ntl::Drawable> drawable;
-        std::function<ntl::FloatRect(const ntl::Drawable&)> getGlobalBounds;
+        std::function<ntl::FloatRect(const ntl::Drawable&)> getBounds;
 
         Object(Object &&other) :
             zLayer(other.zLayer),
             drawable(std::move(other.drawable)),
-            getGlobalBounds(other.getGlobalBounds)
+            getBounds(other.getBounds)
         {}
 
         Object(
-            std::function<ntl::FloatRect(const ntl::Drawable&)> getGlobalBounds,
+            std::function<ntl::FloatRect(const ntl::Drawable&)> getBounds,
             int zLayer,
             std::unique_ptr<ntl::Drawable> &&drawable
         ) :
             zLayer(zLayer),
             drawable(std::move(drawable)),
-            getGlobalBounds(getGlobalBounds)
+            getBounds(getBounds)
         {}
 
         auto operator<=>(const Object &other) const {
@@ -110,14 +110,14 @@ private:
     }
 
     template<HasGlobalBounds Drawable>
-    decltype(Object::getGlobalBounds) getMethod_getGlobalBounds() {
+    decltype(Object::getBounds) getMethod_getBounds() {
         return [](const ntl::Drawable &x) {
-            return dynamic_cast<const Drawable &>(x).getGlobalBounds();
+            return dynamic_cast<const Drawable&>(x).getBounds();
         };
     }
 
     template<HasNotGlobalBounds Drawable>
-    decltype(Object::getGlobalBounds) getMethod_getGlobalBounds() {
+    decltype(Object::getBounds) getMethod_getBounds() {
         return nullptr;
     }
 };

@@ -5,6 +5,9 @@
 #include "Utils/Color.hpp"
 #include "Utils/Vector2.hpp"
 #include "Utils/Rectangular.hpp"
+
 #include "System/Window.hpp"
+
+#include "Graphics/Shape.hpp"
 
 #endif // NTL__GRAPHICS_HPP
