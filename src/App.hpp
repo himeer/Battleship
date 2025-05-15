@@ -19,14 +19,14 @@ public:
 
 protected:
     GraphicManager graphics;
-    ntl::RenderWindow &window;
+    ntl::Window &window;
 
-    App(ntl::RenderWindow &window, ntl::Color backgroundColor = ntl::Color::Black) :
+    App(ntl::Window &window, ntl::Color backgroundColor = ntl::Color::Black) :
         window(window), backgroundColor(backgroundColor)
     {}
 
-    void draw(ntl::Window &target) const override {
-        target.draw(graphics);
+    void draw(ntl::Window &target, ntl::RenderStates states) const override {
+        target.draw(graphics, states);
     }
 };
 

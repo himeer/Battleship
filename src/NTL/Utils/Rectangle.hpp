@@ -15,7 +15,7 @@ public:
 
     template<class OtherT>
     constexpr explicit Rectangle(Rectangle<OtherT> other)
-        : position((Vector2<OtherT>)position), size((Vector2<OtherT>)size) {}
+        : position((Vector2<OtherT>)other.position), size((Vector2<OtherT>)other.size) {}
 
     template<class OtherT>
     constexpr explicit operator Rectangle<OtherT>() {
@@ -24,8 +24,8 @@ public:
 
 
     constexpr bool contains(Vector2<T> point) const {
-        return (point.x > position.x) && (point.y > position.y)
-            && (point.x < position.x + size.x) && (point.y < position.y + size.y);
+        return (point.x >= position.x) && (point.y >= position.y)
+            && (point.x <= position.x + size.x) && (point.y <= position.y + size.y);
     }
 
     constexpr bool isIntersect(const Rectangle<T> &other) const {

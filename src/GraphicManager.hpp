@@ -105,18 +105,18 @@ private:
 
     std::set<Object> objects_;
 
-    void draw(ntl::Window &window) const override {
-        for (const auto &object : objects_) target.draw(*object.drawable, states);
+    void draw(ntl::Window &window, ntl::RenderStates states) const override {
+        for (const auto &object : objects_) window.draw(*object.drawable, states);
     }
 
-    template<HasGlobalBounds Drawable>
+    template<HasBounds Drawable>
     decltype(Object::getBounds) getMethod_getBounds() {
         return [](const ntl::Drawable &x) {
             return dynamic_cast<const Drawable&>(x).getBounds();
         };
     }
 
-    template<HasNotGlobalBounds Drawable>
+    template<HasNotBounds Drawable>
     decltype(Object::getBounds) getMethod_getBounds() {
         return nullptr;
     }

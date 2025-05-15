@@ -4,7 +4,6 @@
 #include "NTL/Graphics.hpp"
 
 #include <vector>
-#include "TextureManager.hpp"
 #include "GraphicManager.hpp"
 #include "Core.hpp"
 
@@ -21,16 +20,18 @@ public:
         segments(rang, true),
         areaPosition({-1, -1})
     {
-        sprite = graphics.add<ntl::Shape>(zLayer, TextureManager::getInstance()[getTextureId(rang)]);
+        const float cs = Core::getCellsize();
+        const ntl::Color color(0x004455ff);
 
-        sprite->setScale({
-            Core::getCellsize() / sprite->getTexture().getSize().x,
-            Core::getCellsize() * rang / sprite->getTexture().getSize().y
-        });
-        sprite->setOrigin({
-            sprite->getTexture().getSize().x / 2.f,
-            sprite->getTexture().getSize().y / rang / 2.f
-        });
+        shape = graphics.add<ntl::Shape>(zLayer, std::initializer_list<ntl::Vertex>{
+            {{cs / 2.f, 0.f      }, color},
+            {{cs,       cs / 2.f }, color},
+            {{cs,       cs * rang}, color},
+            {{0.f,      cs * rang}, color},
+            {{0.f,      cs / 2.f }, color},
+        }, ntl::PrimitiveType::TriangleFan);
+
+        shape->setOrigin({cs / 2.f, cs / 2.f});
     }
 
     Ship(const Ship &other) :
@@ -39,7 +40,7 @@ public:
         vertical(other.vertical),
         areaPosition(other.areaPosition),
         menuPosition(other.menuPosition),
-        sprite(other.sprite)
+        shape(other.shape)
     {}
 
     Ship(Ship &&other) :
@@ -48,7 +49,7 @@ public:
         vertical(other.vertical),
         areaPosition(other.areaPosition),
         menuPosition(other.menuPosition),
-        sprite(other.sprite)
+        shape(other.shape)
     {}
 
     inline std::size_t rang() const {
@@ -71,11 +72,11 @@ public:
     void rotate(bool vertical) {
         this->vertical = vertical;
 
-        sprite->setRotation(ntl::degrees(vertical ? 0.f : -90.f));
+        shape->setRotation(ntl::degrees(vertical ? 0.f : 90.f));
     }
 
     bool setLayer(int zLayer) {
-        return graphics.setLayer(sprite, zLayer);
+        return graphics.setLayer(shape, zLayer);
     }
 
     ntl::IntRect getBounds(bool withExternal) const {
@@ -88,7 +89,7 @@ public:
     bool isIntersect(const Ship &other) const {
         if (areaPosition.x < 0 || other.areaPosition.x < 0) return false;
 
-        return !!getBounds(true).findIntersection(other.getBounds(false));
+        return getBounds(true).isIntersect(other.getBounds(false));
     }
 
 public:
@@ -97,19 +98,7 @@ public:
     bool vertical = true;
     ntl::Vector2i areaPosition;
     ntl::Vector2f menuPosition;
-    ntl::Shape *sprite = nullptr;
-
-protected:
-    static TextureManager::ID getTextureId(size_t rang) {
-        switch (rang) {
-            case 1: return TextureManager::ID::Ship1; break;
-            case 2: return TextureManager::ID::Ship2; break;
-            case 3: return TextureManager::ID::Ship3; break;
-            case 4: return TextureManager::ID::Ship4; break;
-        }
-
-        throw std::runtime_error("Invalid rang of ship: " + std::to_string(rang));
-    }
+    ntl::Shape *shape = nullptr;
 };
 
 #endif // SHIP_HPP

@@ -14,6 +14,8 @@ public:
 
     // virtual void update(ntl::Time delta) override;
 
+    // virtual void draw(ntl::Window &window, ntl::RenderStates states) const override;
+
 protected:
     std::vector<Ship> ships;
     ntl::RectangleShape *divider = nullptr;
