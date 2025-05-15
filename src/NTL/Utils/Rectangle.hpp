@@ -1,24 +1,24 @@
-#ifndef NTL__RECTANGULAR_HPP
-#define NTL__RECTANGULAR_HPP
+#ifndef NTL__RECTANGLE_HPP
+#define NTL__RECTANGLE_HPP
 
 #include "Vector2.hpp"
 
 namespace ntl {
 
 template<class T>
-class Rectangular {
+class Rectangle {
 public:
-    constexpr Rectangular() = default;
+    constexpr Rectangle() = default;
 
-    constexpr Rectangular(Vector2<T> position, Vector2<T> size)
+    constexpr Rectangle(Vector2<T> position, Vector2<T> size)
         : position(position), size(size) {}
 
     template<class OtherT>
-    constexpr explicit Rectangular(Rectangular<OtherT> other)
+    constexpr explicit Rectangle(Rectangle<OtherT> other)
         : position((Vector2<OtherT>)position), size((Vector2<OtherT>)size) {}
 
     template<class OtherT>
-    constexpr explicit operator Rectangular<OtherT>() {
+    constexpr explicit operator Rectangle<OtherT>() {
         return { (Vector2<OtherT>)position, (Vector2<OtherT>)size };
     }
 
@@ -28,7 +28,7 @@ public:
             && (point.x < position.x + size.x) && (point.y < position.y + size.y);
     }
 
-    constexpr bool isIntersect(const Rectangular<T> &other) const {
+    constexpr bool isIntersect(const Rectangle<T> &other) const {
         return (position.x < other.position.x + other.size.x)
             && (position.x + size.x > other.position.x)
             && (position.y < other.position.y + other.size.y)
@@ -36,13 +36,13 @@ public:
     }
 
 public:
-    T position{};
-    T size{};
+    Vector2<T> position{};
+    Vector2<T> size{};
 };
 
-using FloatRect = Rectangular<float>;
-using IntRect = Rectangular<int>;
+using FloatRect = Rectangle<float>;
+using IntRect = Rectangle<int>;
 
 }
 
-#endif // NTL__RECTANGULAR_HPP
+#endif // NTL__RECTANGLE_HPP

@@ -1,6 +1,8 @@
 #ifndef NTL__DRAWABLE_HPP
 #define NTL__DRAWABLE_HPP
 
+#include "RenderStates.hpp"
+
 namespace ntl {
 
 class Window;
@@ -12,7 +14,7 @@ public:
 protected:
     friend class Window;
 
-    virtual void draw(Window &target) const = 0;
+    virtual void draw(Window &target, RenderStates renderStates) const = 0;
 };
 
 }

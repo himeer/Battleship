@@ -51,6 +51,14 @@ public:
         return { -x, -y };
     }
 
+
+    constexpr Vector2<T> componentWiseMul(Vector2<T> other) const {
+        return {
+            x * other.x,
+            y * other.y,
+        };
+    }
+
 public:
     T x{};
     T y{};
@@ -69,6 +77,22 @@ constexpr Vector2<T> operator*(T left, Vector2<T> right) {
     return {
         left * right.x,
         left * right.y,
+    };
+}
+
+template<class T>
+constexpr Vector2<T> operator/(Vector2<T> left, T right) {
+    return {
+        left.x / right,
+        left.y / right,
+    };
+}
+
+template<class T>
+constexpr Vector2<T> operator/(T left, Vector2<T> right) {
+    return {
+        left / right.x,
+        left / right.y,
     };
 }
 

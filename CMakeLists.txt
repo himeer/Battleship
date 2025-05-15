@@ -1,16 +1,10 @@
 cmake_minimum_required(VERSION 3.28)
-project(BattleshipProject LANGUAGES CXX)
+project(BattleshipProject LANGUAGES CXX C)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include(FetchContent)
-# FetchContent_Declare(SFML
-#     GIT_REPOSITORY https://github.com/SFML/SFML.git
-#     GIT_TAG 3.0.1
-#     GIT_SHALLOW ON
-#     EXCLUDE_FROM_ALL
-#     SYSTEM)
-# FetchContent_MakeAvailable(SFML)
+
 FetchContent_Declare(
     glfw
     GIT_REPOSITORY https://github.com/glfw/glfw.git
@@ -29,13 +23,18 @@ FetchContent_MakeAvailable(glfw)
 
 find_package(OpenGL REQUIRED)
 
+
+add_library(glad SHARED glad/src/glad.c)
+target_include_directories(glad PUBLIC glad/include)
+
 add_executable(Battleship
     src/NTL/Utils/Color.cpp
     src/NTL/System/Window.cpp
     src/NTL/Graphics/Shape.cpp
+    src/NTL/Graphics/Shader.cpp
 
     src/Core.cpp
-    # src/ShipPlacementMenu.cpp
+    src/ShipPlacementMenu.cpp
 )
 target_compile_features(Battleship PRIVATE cxx_std_20)
-target_link_libraries(Battleship PRIVATE OpenGL::GL glfw)
+target_link_libraries(Battleship PRIVATE OpenGL::GL glfw glad)

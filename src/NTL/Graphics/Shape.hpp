@@ -2,40 +2,51 @@
 #define NTL__SHAPE_HPP
 
 #include <vector>
-#include "../Utils/Rectangular.hpp"
+#include "../Utils/Rectangle.hpp"
 #include "../Utils/Color.hpp"
 #include "PrimitiveType.hpp"
 #include "Vertex.hpp"
 #include "Drawable.hpp"
+#include "Transformable.hpp"
 
 namespace ntl {
 
-class Shape : Drawable {
+class Shape : public Drawable, public Transformable {
 public:
-    void setFillColor(Color color);
+    Shape() {}
 
-    void setOutlineColor(Color color);
+    Shape(std::initializer_list<Vertex> vertices, PrimitiveType type) :
+        vertices_(vertices.begin(), vertices.end()),
+        type_(type)
+    {}
 
-    void setOutlineThickness(float thickness);
+    template<class Container>
+    Shape(Container vertices, PrimitiveType type) :
+        vertices_(vertices.begin(), vertices.end()),
+        type_(type)
+    {}
 
 
-    Color getFillColor() const;
+    template<class Container>
+    void setVertices(std::initializer_list<Vertex> vertices, PrimitiveType type) {
+        vertices_.assign(vertices.begin(), vertices.end());
+    }
 
-    Color getOutlineColor() const;
+    template<class Container>
+    void setVertices(Container vertices, PrimitiveType type) {
+        vertices_.assign(vertices.begin(), vertices.end());
+    }
 
-    float getOutlineThickness() const;
+
+    void setColor(Color color);
 
     FloatRect getBounds() const;
 
 protected:
-    Color fillColor_;
-    Color outlineColor_;
-    float outlineThickness_;
     std::vector<Vertex> vertices_;
-    std::vector<Vertex> verticesOutline_;
+    PrimitiveType type_ = PrimitiveType::Points;
 
-private:
-    virtual void draw(Window &window) const override;
+    virtual void draw(Window &window, RenderStates renderStates) const override;
 };
 
 }
