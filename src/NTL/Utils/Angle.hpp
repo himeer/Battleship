@@ -10,7 +10,7 @@ public:
     constexpr Angle() = default;
 
     constexpr float asDegrees() const {
-        return radians_ * (180.f / std::numbers::pi);
+        return radians_ * (180.f / std::numbers::pi_v<float>);
     }
 
     constexpr float asRadians() const {
@@ -28,7 +28,7 @@ private:
 };
 
 constexpr Angle degrees(float angle) {
-    return Angle(angle * (std::numbers::pi / 180.f));
+    return Angle(angle * (std::numbers::pi_v<float> / 180.f));
 }
 
 constexpr Angle radians(float angle) {

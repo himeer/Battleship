@@ -11,5 +11,6 @@
 #include "Graphics/Shader.hpp"
 #include "Graphics/Shape.hpp"
 #include "Graphics/RectangleShape.hpp"
+#include "Graphics/Sprite.hpp"
 
 #endif // NTL__GRAPHICS_HPP

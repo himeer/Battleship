@@ -10,6 +10,7 @@
 
 #include "Angle.hpp"
 #include "Vector2.hpp"
+#include "Rectangle.hpp"
 
 namespace ntl {
 
@@ -76,8 +77,8 @@ public:
 
 
     void rotateAroundZ(Angle angle) {
-        auto cos = (T)std::cos(angle.asRadians());
-        auto sin = (T)std::sin(angle.asRadians());
+        auto cos = static_cast<T>(std::cos(angle.asRadians()));
+        auto sin = static_cast<T>(std::sin(angle.asRadians()));
 
         *this *= Matrix4x4({
             cos, -sin, 0, 0,
@@ -87,7 +88,7 @@ public:
         });
     }
 
-    void translate(Vector2<T> delta) {
+    constexpr void translate(Vector2<T> delta) {
         *this *= Matrix4x4({
             1, 0, 0, delta.x,
             0, 1, 0, delta.y,
@@ -96,7 +97,7 @@ public:
         });
     }
 
-    void scale(Vector2<T> scale) {
+    constexpr void scale(Vector2<T> scale) {
         auto [x, y] = scale;
 
         *this *= Matrix4x4({
@@ -107,6 +108,9 @@ public:
         });
     }
 
+    constexpr FloatRect transformRect(const FloatRect &rectangle) const;
+
+public:
     static const Matrix4x4<T> Identity;
 
 private:
@@ -126,6 +130,34 @@ constexpr Vector2<T> operator*(const Matrix4x4<T> &matrix, Vector2<T> vector) {
     return {
         m[0][0] * x + m[0][1] * y + m[0][3],
         m[1][0] * x + m[1][1] * y + m[1][3],
+    };
+}
+
+
+template<class T>
+constexpr FloatRect Matrix4x4<T>::transformRect(const FloatRect &rectangle) const {
+    std::array points{
+        rectangle.position,
+        rectangle.position + Vector2f(0.f, rectangle.size.y),
+        rectangle.position + rectangle.size,
+        rectangle.position + Vector2f(rectangle.size.x, 0.f),
+    };
+
+    ntl::Vector2f topLeft = *this * points[0];
+    ntl::Vector2f bottomRight = topLeft;
+
+    for (auto &point : points) {
+        const auto position = *this * point;
+
+        topLeft.x = std::min(topLeft.x, position.x);
+        topLeft.y = std::min(topLeft.y, position.y);
+        bottomRight.x = std::max(bottomRight.x, position.x);
+        bottomRight.y = std::max(bottomRight.y, position.y);
+    }
+
+    return {
+        topLeft,
+        bottomRight - topLeft
     };
 }
 

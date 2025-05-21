@@ -13,6 +13,7 @@
 #include "../Utils/Rectangle.hpp"
 #include "../Graphics/PrimitiveType.hpp"
 #include "../Graphics/RenderStates.hpp"
+#include "../Graphics/Shader.hpp"
 #include "Event.hpp"
 
 struct GLFWwindow;

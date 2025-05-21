@@ -57,6 +57,7 @@ ntl::Window::Window(Vector2i size, std::string_view title) :
 {
     assert(glfwInit());
 
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
@@ -103,8 +104,15 @@ ntl::Window::Window(Vector2i size, std::string_view title) :
     glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void *)offsetof(Vertex, color));
     glEnableVertexAttribArray(1);
 
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, texCoord));
+    glEnableVertexAttribArray(2);
+
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
 }
 
 ntl::Window::~Window() {
@@ -158,7 +166,12 @@ void ntl::Window::draw(const Vertex *vertices, size_t count, PrimitiveType type,
     if (!renderStates.shader) renderStates.shader = &defaultShader_;
     renderStates.shader->use();
     renderStates.shader->setUniform("ntl_view", view_);
-    renderStates.shader->setUniform("ntl_trans", *renderStates.transform);
+    renderStates.shader->setUniform("ntl_trans", renderStates.transform);
+    renderStates.shader->setUniform("ntl_useTexture", !!renderStates.texture);
+
+    if (renderStates.texture) {
+        renderStates.shader->setTexture("ntl_texture", *renderStates.texture, 0);
+    }
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 
