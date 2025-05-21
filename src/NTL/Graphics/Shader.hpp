@@ -7,6 +7,8 @@
 
 namespace ntl {
 
+struct Texture;
+
 class Shader {
 public:
     Shader() :
@@ -29,9 +31,13 @@ public:
 
     void use() const;
 
+    void setUniform(std::string_view name, bool value) const;
+
     void setUniform(std::string_view name, const Vector2f &value) const;
 
     void setUniform(std::string_view name, const Matrix4x4f &value) const;
+
+    void setTexture(std::string_view name, const Texture &texture, int number) const;
 
 public:
     static const char *DefaultVertexSource;

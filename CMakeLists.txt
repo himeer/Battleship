@@ -32,9 +32,11 @@ add_executable(Battleship
     src/NTL/System/Window.cpp
     src/NTL/Graphics/Shape.cpp
     src/NTL/Graphics/Shader.cpp
+    src/NTL/Graphics/Texture.cpp
 
     src/Core.cpp
     src/ShipPlacementMenu.cpp
 )
 target_compile_features(Battleship PRIVATE cxx_std_20)
 target_link_libraries(Battleship PRIVATE OpenGL::GL glfw glad)
+target_include_directories(Battleship PUBLIC stb)

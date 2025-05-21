@@ -4,9 +4,11 @@
 #include <glad/glad.h>
 #include <string_view>
 #include "../Utils/Matrix.hpp"
-#include "Shader.hpp"
 
 namespace ntl {
+
+struct Shader;
+struct Texture;
 
 class RenderStates {
 public:
@@ -15,7 +17,7 @@ public:
     RenderStates(const RenderStates &other) = default;
 
     RenderStates(const Matrix4x4f &transform) :
-        transform(&transform)
+        transform(transform)
     {}
 
     RenderStates(const Shader &shader) :
@@ -23,13 +25,14 @@ public:
     {}
 
     RenderStates(const Matrix4x4f &transform, const Shader &shader) :
-        transform(&transform),
+        transform(transform),
         shader(&shader)
     {}
 
 public:
     const Shader *shader{};
-    const Matrix4x4f *transform = &Matrix4x4f::Identity;
+    const Texture *texture{};
+    Matrix4x4f transform;
 
     static const RenderStates Default;
 };

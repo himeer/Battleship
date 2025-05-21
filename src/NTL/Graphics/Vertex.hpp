@@ -10,6 +10,7 @@ namespace ntl {
 struct Vertex {
     Vector2f position;
     Color color = Color::White;
+    Vector2f texCoord;
 };
 
 }
