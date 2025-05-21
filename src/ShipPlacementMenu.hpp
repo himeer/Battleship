@@ -2,9 +2,11 @@
 #define SHIP_PLACEMENT_MENU_HPP
 
 #include <vector>
+#include <array>
 #include "App.hpp"
 #include "Ship.hpp"
 #include "GameGrid.hpp"
+#include "GameApp.hpp"
 
 class ShipPlacementMenu : public App {
 public:
@@ -14,17 +16,19 @@ public:
 
     // virtual void update(ntl::Time delta) override;
 
-    // virtual void draw(ntl::Window &window, ntl::RenderStates states) const override;
+    virtual void draw(ntl::Window &window, ntl::RenderStates states) const override;
 
 protected:
-    std::vector<Ship> ships;
+    std::array<GraphicManager, 2> playerGraphics;
     ntl::RectangleShape *divider = nullptr;
+    ntl::Sprite *nextButton = nullptr;
+    std::array<GameGrid, 2> grid;
     int selectedShipIdx = -1;
-    GameGrid grid;
+    int currentPlayerIdx = 0;
 
-    static constexpr int LAYER_GRID = 0;
-    static constexpr int LAYER_SHIP = 100;
-    static constexpr int LAYER_SHIP_ACTIVE = LAYER_SHIP + 1;
+    GameApp gameApp;
+
+    void testPlaceShips();
 };
 
 #endif // SHIP_PLACEMENT_MENU_HPP

@@ -14,12 +14,21 @@ FetchContent_Declare(
     SYSTEM
 )
 
+FetchContent_Declare(
+    stb
+    GIT_REPOSITORY https://github.com/nothings/stb.git
+    GIT_TAG master
+    GIT_SHALLOW ON
+    EXCLUDE_FROM_ALL
+    SYSTEM
+)
+
 set(GLFW_BUILD_EXAMPLES OFF CACHE INTERNAL "")
 set(GLFW_BUILD_TESTS OFF CACHE INTERNAL "")
 set(GLFW_BUILD_DOCS OFF CACHE INTERNAL "")
 set(GLFW_INSTALL OFF CACHE INTERNAL "")
 
-FetchContent_MakeAvailable(glfw)
+FetchContent_MakeAvailable(glfw stb)
 
 find_package(OpenGL REQUIRED)
 
@@ -35,8 +44,12 @@ add_executable(Battleship
     src/NTL/Graphics/Texture.cpp
 
     src/Core.cpp
+    src/TextureManager.cpp
     src/ShipPlacementMenu.cpp
+    src/GameApp.cpp
+    src/Ship.cpp
+    src/GameGrid.cpp
 )
 target_compile_features(Battleship PRIVATE cxx_std_20)
 target_link_libraries(Battleship PRIVATE OpenGL::GL glfw glad)
-target_include_directories(Battleship PUBLIC stb)
+target_include_directories(Battleship PUBLIC ${stb_SOURCE_DIR})
