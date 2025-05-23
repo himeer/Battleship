@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+#include <random>
 
 ShipPlacementMenu::ShipPlacementMenu(ntl::Window &window) :
     App(window, ntl::Color(0x7aa1cdff)),
@@ -50,7 +51,7 @@ bool ShipPlacementMenu::handle(const ntl::Event &event) {
         if (keyPressed->code == GLFW_KEY_R && selectedShipIdx >= 0) {
             ships[selectedShipIdx].rotate();
         } else if (keyPressed->code == GLFW_KEY_G) {
-            testPlaceShips();
+            autoPlaceShips();
         }
     } else if (const auto* mousePressed = event.getIf<ntl::Event::MouseButtonPressed>()) {
         if (mousePressed->button == GLFW_MOUSE_BUTTON_LEFT) {
@@ -137,45 +138,79 @@ void ShipPlacementMenu::draw(ntl::Window &window, ntl::RenderStates states) cons
     App::draw(window, states);
 }
 
-void ShipPlacementMenu::testPlaceShips() {
+void ShipPlacementMenu::autoPlaceShips() {
     auto& currentGrid = grid[currentPlayerIdx];
     auto& ships = currentGrid.ships;
     const auto gridPos = currentGrid.gridDrawable->getPosition(window.getSize());
 
-    for (auto& ship : ships) {
-        ship.cellPosition = {-1, -1};
-        ship.rotate(false);
-        ship.drawable->setPosition(ship.menuPosition);
-    }
+    auto isValidPosition = [&](const Ship& ship, int x, int y, bool isVertical) {
+        if (isVertical) {
+            if (y + ship.rang() > 10) return false;
+        } else {
+            if (x + ship.rang() > 10) return false;
+        }
 
-    ships[0].cellPosition = {4, 7};
-    ships[1].cellPosition = {7, 8};
-    ships[2].cellPosition = {7, 6};
-    ships[3].cellPosition = {9, 7};
-
-    ships[4].cellPosition = {7, 1};
-    ships[4].rotate(false);
-    ships[5].cellPosition = {4, 4};
-    ships[5].rotate(true);
-    ships[6].cellPosition = {1, 7};
-    ships[6].rotate(false);
-
-    ships[7].cellPosition = {1, 1};
-    ships[7].rotate(false);
-
-    ships[8].cellPosition = {1, 3};
-    ships[8].rotate(true);
-
-    ships[9].cellPosition = {0, 9};
-    ships[9].rotate(false);
-
-    for (auto& ship : ships) {
-        ship.drawable->setPosition(
-            gridPos + 
-            (ntl::Vector2f)ship.cellPosition * Core::getCellsize() + 
-            ship.drawable->getOrigin().componentWiseMul(ship.drawable->getScale())
+        ntl::IntRect bounds(
+            {x, y},
+            isVertical ? ntl::Vector2i(1, ship.rang()) : ntl::Vector2i(ship.rang(), 1)
         );
-    }
+
+        for (const auto& other : ships) {
+            if (&other == &ship || other.cellPosition.x < 0) continue;
+
+            if (other.getBounds(true).isIntersect(bounds)) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    std::random_device device;
+    std::default_random_engine engine(device());
+
+    bool isErrorToPlace = false;
+    do {
+        for (auto& ship : ships) {
+            ship.cellPosition = {-1, -1};
+            ship.rotate(false);
+            ship.drawable->setPosition(ship.menuPosition);
+        }
+
+        for (auto& ship : ships) {
+            struct Valid {
+                ntl::Vector2i position;
+                int vertical{};
+            };
+
+            std::vector<Valid> validPlaces;
+
+            for (int x = 0; x < 10; ++x) {
+                for (int y = 0; y < 10; ++y) {
+                    for (int vertical = 0; vertical < 2; ++vertical) {
+                        if (isValidPosition(ship, x, y, vertical)) {
+                            validPlaces.push_back({{x, y}, vertical});
+                        }
+                    }
+                }
+            }
+
+            if (!validPlaces.empty()) {
+                std::uniform_int_distribution<int> uniform(0, validPlaces.size() - 1);
+                auto &validPlace = validPlaces[uniform(engine)];
+                ship.cellPosition = validPlace.position;
+                ship.rotate(validPlace.vertical);
+                ship.drawable->setPosition(
+                    gridPos +
+                    (ntl::Vector2f)ship.cellPosition * Core::getCellsize() +
+                    ship.drawable->getOrigin().componentWiseMul(ship.drawable->getScale())
+                );
+            } else {
+                isErrorToPlace = true;
+                break;
+            }
+        }
+    } while (isErrorToPlace);
 
     graphics.setVisibility(nextButton, true);
 }

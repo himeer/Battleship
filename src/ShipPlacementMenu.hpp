@@ -28,7 +28,7 @@ protected:
 
     GameApp gameApp;
 
-    void testPlaceShips();
+    void autoPlaceShips();
 };
 
 #endif // SHIP_PLACEMENT_MENU_HPP
