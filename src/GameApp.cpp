@@ -8,8 +8,8 @@
 GameApp::GameApp(ntl::Window &window) :
     App(window, ntl::Color(0x7aa1cdff)),
     grid({
-        {graphics, LAYER_GRID, true},
-        {graphics, LAYER_GRID, false},
+        {graphics, Core::LAYER_GRID, true},
+        {graphics, Core::LAYER_GRID, false},
     })
 {
     divider = graphics.add<ntl::RectangleShape>(

@@ -113,7 +113,7 @@ private:
         }
     };
 
-    public:
+public:
     std::set<Object> objects_;
 
     void draw(ntl::Window &window, ntl::RenderStates states) const override {
