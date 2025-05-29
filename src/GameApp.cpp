@@ -47,7 +47,7 @@ bool GameApp::handle(const ntl::Event &event) {
 
 void GameApp::draw(ntl::Window &window, ntl::RenderStates states) const {
     yourMoveText->setPosition({
-        window.getSize().x * 0.25f * (currentPlayerIdx ? 3 : 1) - yourMoveText->getLocalBounds().size.x / 2.f,
+        window.getSize().x * 0.25f * (currentPlayerIdx ? 1 : 3) - yourMoveText->getLocalBounds().size.x / 2.f,
         0
     });
 

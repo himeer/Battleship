@@ -23,7 +23,7 @@ protected:
     std::array<GameGrid, 2> grid;
     ntl::RectangleShape *divider{};
     ntl::Sprite *yourMoveText{};
-    int currentPlayerIdx = 0;
+    int currentPlayerIdx = 1;
     bool isWin = false;
 };
 
