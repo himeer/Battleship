@@ -169,8 +169,10 @@ void ShipPlacementMenu::autoPlaceShips() {
     std::random_device device;
     std::default_random_engine engine(device());
 
-    bool isErrorToPlace = false;
+    bool isErrorToPlace{};
     do {
+        isErrorToPlace = false;
+
         for (auto& ship : ships) {
             ship.cellPosition = {-1, -1};
             ship.rotate(false);
