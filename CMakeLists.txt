@@ -33,7 +33,7 @@ FetchContent_MakeAvailable(glfw stb)
 find_package(OpenGL REQUIRED)
 
 
-add_library(glad SHARED glad/src/glad.c)
+add_library(glad STATIC glad/src/glad.c)
 target_include_directories(glad PUBLIC glad/include)
 
 add_executable(Battleship

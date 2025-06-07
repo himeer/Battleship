@@ -166,6 +166,11 @@ void ShipPlacementMenu::autoPlaceShips() {
         return true;
     };
 
+    if (selectedShipIdx >= 0) {
+        ships[selectedShipIdx].setLayer(Core::LAYER_SHIP);
+        selectedShipIdx = -1;
+    }
+
     std::random_device device;
     std::default_random_engine engine(device());
 
