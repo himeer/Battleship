@@ -80,7 +80,7 @@ ntl::Shader::Shader(const char *vertexSrc, const char *fragmentSrc) {
 }
 
 ntl::Shader::~Shader() {
-    glDeleteProgram(program_);
+    // glDeleteProgram(program_); // TODO: should delete before destroying the window
 }
 
 void ntl::Shader::use() const {

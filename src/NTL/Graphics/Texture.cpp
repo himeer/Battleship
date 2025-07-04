@@ -7,7 +7,7 @@
 #include <stdexcept>
 
 ntl::Texture::~Texture() {
-    glDeleteTextures(1, &texture_);
+    // glDeleteTextures(1, &texture_); // TODO: should delete before destroying the window
 }
 
 void ntl::Texture::loadFromFile(std::string_view fileName)
